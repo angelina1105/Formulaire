@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Formulaire de la réforme de la facturation électronique</title>
+    <style>
+      :root {
+        --bg: #f3f2f1;
+        --card: #ffffff;
+        --text: #1f1f1f;
+        --muted: #616161;
+        --primary: #0f6cbd;
+        --primary-dark: #0b4f8a;
+        --border: #d1d1d1;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Segoe UI", Arial, sans-serif;
+        background: linear-gradient(135deg, #eef5ff 0%, var(--bg) 100%);
+        color: var(--text);
+      }
+
+      .page {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+      }
+
+      .card {
+        width: min(860px, 100%);
+        background: var(--card);
+        border-radius: 20px;
+        box-shadow: 0 18px 50px rgba(15, 108, 189, 0.12);
+        overflow: hidden;
+        border: 1px solid rgba(0, 0, 0, 0.04);
+      }
+
+      .header {
+        background: linear-gradient(90deg, var(--primary) 0%, #2f8ade 100%);
+        color: white;
+        padding: 28px 32px;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.18);
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 12px;
+        letter-spacing: 0.02em;
+      }
+
+      .header h1 {
+        margin: 0 0 8px;
+        font-size: 28px;
+        font-weight: 700;
+      }
+
+      .header p {
+        margin: 0;
+        color: rgba(255, 255, 255, 0.95);
+        font-size: 15px;
+        line-height: 1.5;
+      }
+
+      .content {
+        padding: 28px 32px 32px;
+      }
+
+      .question {
+        padding: 20px;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        background: #fbfdff;
+      }
+
+      .question h2 {
+        margin: 0 0 8px;
+        font-size: 18px;
+        font-weight: 600;
+      }
+
+      .question p {
+        margin: 0 0 16px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .choices {
+        display: grid;
+        gap: 10px;
+      }
+
+      .choice {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 14px;
+        border: 1px solid #dfe8f2;
+        border-radius: 12px;
+        background: white;
+        cursor: pointer;
+        transition: transform 0.2s ease, border-color 0.2s ease;
+      }
+
+      .choice:hover {
+        transform: translateY(-1px);
+        border-color: var(--primary);
+      }
+
+      .choice input {
+        accent-color: var(--primary);
+        width: 16px;
+        height: 16px;
+      }
+
+      .field {
+        display: grid;
+        gap: 8px;
+        margin-top: 16px;
+      }
+
+      .conditional-field.hidden {
+        display: none;
+      }
+
+      label {
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      input, textarea, select {
+        width: 100%;
+        padding: 12px 14px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        font: inherit;
+        background: white;
+      }
+
+      .actions {
+        margin-top: 24px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+      }
+
+      .status {
+        margin-top: 14px;
+        padding: 10px 12px;
+        border-radius: 10px;
+        background: #eef7ee;
+        color: #136132;
+        font-size: 14px;
+        display: none;
+      }
+
+      .status.show {
+        display: block;
+      }
+
+      .helper {
+        margin-top: 8px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+
+      .responses-table-wrapper {
+        margin-top: 20px;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        overflow: hidden;
+        background: white;
+      }
+
+      .responses-table-wrapper.hidden {
+        display: none;
+      }
+
+      .table-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 14px;
+        background: #f7f9fc;
+        border-bottom: 1px solid #e6edf6;
+      }
+
+      .table-toolbar strong {
+        font-size: 14px;
+        color: var(--primary-dark);
+      }
+
+      .csv-link {
+        color: var(--primary);
+        font-weight: 600;
+        text-decoration: none;
+        font-size: 14px;
+      }
+
+      .table-scroll {
+        overflow-x: auto;
+      }
+
+      .responses-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+
+      .responses-table th,
+      .responses-table td {
+        padding: 10px 12px;
+        border-bottom: 1px solid #eef2f7;
+        text-align: left;
+        vertical-align: top;
+      }
+
+      .responses-table th {
+        background: #fbfdff;
+        font-weight: 700;
+        color: var(--primary-dark);
+        white-space: nowrap;
+      }
+
+      button {
+        border: 0;
+        padding: 12px 18px;
+        border-radius: 999px;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 15px;
+      }
+
+      .primary {
+        background: var(--primary);
+        color: white;
+      }
+
+      .primary:hover {
+        background: var(--primary-dark);
+      }
+
+      .ghost {
+        background: #f5f7fb;
+        color: var(--text);
+      }
+
+      @media (max-width: 640px) {
+        .header,
+        .content {
+          padding: 22px;
+        }
+
+        .header h1 {
+          font-size: 24px;
+        }
+
+        .actions {
+          flex-direction: column-reverse;
+        }
+
+        button {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <section class="card" aria-label="Formulaire Réforme de la Facturation Electronique">
+        <div class="header">
+          <div class="eyebrow">● Froid 35</div>
+          <h1>Réforme de la Facturation Electronique</h1>
+          <p>Dans le cadre de la Réforme de la Facturation Electronique, nous vous remercions de bien vouloir répondre à ce formulaire afin de mettre vos données à jour dans notre base :</p>
+        </div>
+
+        <div class="content">
+          <form id="responseForm" method="POST" action="https://formspree.io/f/mjgnjvlz">
+            <div class="question">
+              <h2>1. Informations de contact</h2>
+              <p>Choisissez votre profil puis renseignez les informations demandées.</p>
+
+              <div class="field">
+                <label for="vousEtes">Vous êtes :</label>
+                <select id="vousEtes" name="vousEtes" required>
+                  <option value="">Sélectionnez...</option>
+                  <option value="Client">Client</option>
+                  <option value="Fournisseur">Fournisseur</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label for="typologie">Quel est votre typologie ?</label>
+                <select id="typologie" name="typologie" required>
+                  <option value="">Sélectionnez...</option>
+                  <option value="Entreprise">Entreprise</option>
+                  <option value="Entité publique">Entité publique</option>
+                </select>
+              </div>
+
+              <div id="fieldEntitePublique" class="conditional-field hidden">
+                <div class="field">
+                  <label for="entitePublique">Quel est votre entité publique ?</label>
+                  <input id="entitePublique" name="entitePublique" type="text" placeholder="Entrez le nom de l'entité publique" />
+                </div>
+              </div>
+
+              <div id="fieldEntreprise" class="conditional-field hidden">
+                <div class="field">
+                  <label for="nomEntreprise">Quel est le nom de votre entreprise ?</label>
+                  <input id="nomEntreprise" name="nomEntreprise" type="text" placeholder="Entrez le nom de votre entreprise" />
+                </div>
+              </div>
+
+              <div id="fieldStatutEntreprise" class="conditional-field hidden">
+                <div class="field">
+                  <label for="statutEntreprise">Quel est le statut de votre entreprise ?</label>
+                  <select id="statutEntreprise" name="statutEntreprise">
+                    <option value="">Sélectionnez...</option>
+                    <option value="Entreprise individuelle (EI)">Entreprise individuelle (EI)</option>
+                    <option value="Auto-entrepreneur">Auto-entrepreneur</option>
+                    <option value="Entreprise unipersonnelle à responsabilité limitée (EURL)">Entreprise unipersonnelle à responsabilité limitée (EURL)</option>
+                    <option value="Société par actions simplifiée unipersonnelle (SASU)">Société par actions simplifiée unipersonnelle (SASU)</option>
+                    <option value="Société par actions simplifiée (SAS)">Société par actions simplifiée (SAS)</option>
+                    <option value="Société à responsabilité limitée (SARL)">Société à responsabilité limitée (SARL)</option>
+                    <option value="Société anonyme (SA)">Société anonyme (SA)</option>
+                    <option value="Association">Association</option>
+                    <option value="Autre">Autre</option>
+                  </select>
+                </div>
+                <div id="fieldAutreStatut" class="conditional-field hidden">
+                  <div class="field">
+                    <label for="autreStatut">Précisez le statut de votre entreprise</label>
+                    <input id="autreStatut" name="autreStatut" type="text" placeholder="Précisez le statut" />
+                  </div>
+                </div>
+              </div>
+
+              <div id="fieldInfosEntreprise" class="conditional-field hidden">
+                <div class="field">
+                  <label for="siren">N° SIREN (9 chiffres)</label>
+                  <input id="siren" name="siren" type="text" inputmode="numeric" maxlength="9" pattern="[0-9]*" placeholder="Ex. 123456789" />
+                </div>
+                <div class="field">
+                  <label for="siret">N° SIRET (13 chiffres)</label>
+                  <input id="siret" name="siret" type="text" inputmode="numeric" maxlength="14" pattern="[0-9]*" placeholder="Ex. 1234567890123" />
+                </div>
+                <div class="field">
+                  <label for="codeApe">Code APE</label>
+                  <input id="codeApe" name="codeApe" type="text" pattern="[0-9A-Z]*" maxlength="6" placeholder="Ex. 6201Z" />
+                </div>
+                <div class="field">
+                  <label for="tvaIntracom">N° TVA INTRACOM</label>
+                  <input id="tvaIntracom" name="tvaIntracom" type="text" pattern="[0-9A-Z]*" placeholder="Ex. FR12345678901" />
+                </div>
+              </div>
+
+              <div id="fieldAdresseFacturation" class="conditional-field hidden">
+                <div class="field">
+                  <label for="adresseFacturation">Adresse de facturation</label>
+                  <input id="adresseFacturation" name="adresseFacturation" type="text" placeholder="Entrez l'adresse de facturation" />
+                </div>
+                <div class="field">
+                  <label for="destinataire">Destinataire</label>
+                  <input id="destinataire" name="destinataire" type="text" placeholder="Entrez le destinataire" />
+                </div>
+                <div class="field">
+                  <label for="codePostal">Code postal</label>
+                  <input id="codePostal" name="codePostal" type="text" placeholder="Ex. 33000" />
+                </div>
+                <div class="field">
+                  <label for="ville">Ville</label>
+                  <input id="ville" name="ville" type="text" placeholder="Entrez la ville" />
+                </div>
+                <div class="field">
+                  <label for="emailFacturation">Adresse e-mail</label>
+                  <input id="emailFacturation" name="emailFacturation" type="email" placeholder="Entrez l'adresse e-mail" />
+                </div>
+                <div class="field">
+                  <label for="telephone">Téléphone</label>
+                  <input id="telephone" name="telephone" type="tel" placeholder="Entrez le numéro de téléphone" />
+                </div>
+                <div class="field">
+                  <label for="adresseLivraison">Adresse de livraison</label>
+                  <input id="adresseLivraison" name="adresseLivraison" type="text" placeholder="Entrez l'adresse de livraison" />
+                </div>
+              </div>
+
+              <div id="fieldTvaClient" class="conditional-field hidden">
+                <div class="field">
+                  <label>Votre entreprise est-elle assujettie à la TVA ?</label>
+                  <div class="choices">
+                    <label class="choice"><input type="radio" name="assujettieTva" value="Oui" /> Oui</label>
+                    <label class="choice"><input type="radio" name="assujettieTva" value="Non" /> Non</label>
+                  </div>
+                </div>
+                <div class="field">
+                  <label>Votre entreprise bénéficie-t-elle du régime de franchise en base de TVA ?</label>
+                  <div class="choices">
+                    <label class="choice"><input type="radio" name="franchiseBaseTva" value="Oui" /> Oui</label>
+                    <label class="choice"><input type="radio" name="franchiseBaseTva" value="Non" /> Non</label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="plateformeAgradee">Quel est la plateforme agrée que vous avez choisie ?</label>
+                <input id="plateformeAgradee" name="plateformeAgradee" type="text" placeholder="Entrez la plateforme agrée" />
+              </div>
+
+              <div class="field">
+                <label for="identifiantReception">Quel est votre identifiant de réception / adresse de routage sur la plateforme ?</label>
+                <input id="identifiantReception" name="identifiantReception" type="text" placeholder="Entrez votre identifiant ou adresse de routage" />
+              </div>
+
+              <div class="actions">
+                <button class="ghost" type="reset">Effacer</button>
+                <button class="primary" type="submit">Soumettre</button>
+              </div>
+
+              <div id="statusMessage" class="status" role="status" aria-live="polite"></div>
+
+              <div id="responsesTableWrapper" class="responses-table-wrapper hidden">
+                <div class="table-toolbar">
+                  <strong>Réponses enregistrées</strong>
+                  <a id="csvDownloadLink" class="csv-link" href="#">Télécharger le CSV</a>
+                </div>
+                <div class="table-scroll">
+                  <table id="responsesTable" class="responses-table">
+                    <thead>
+                      <tr></tr>
+                    </thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const form = document.getElementById('responseForm');
+      const statusMessage = document.getElementById('statusMessage');
+      const vousEtesSelect = document.getElementById('vousEtes');
+      const typologieSelect = document.getElementById('typologie');
+      const fieldEntitePublique = document.getElementById('fieldEntitePublique');
+      const fieldEntreprise = document.getElementById('fieldEntreprise');
+      const fieldStatutEntreprise = document.getElementById('fieldStatutEntreprise');
+      const fieldAutreStatut = document.getElementById('fieldAutreStatut');
+      const fieldInfosEntreprise = document.getElementById('fieldInfosEntreprise');
+      const fieldAdresseFacturation = document.getElementById('fieldAdresseFacturation');
+      const fieldTvaClient = document.getElementById('fieldTvaClient');
+      const statutEntrepriseSelect = document.getElementById('statutEntreprise');
+      const sirenInput = document.getElementById('siren');
+      const siretInput = document.getElementById('siret');
+      const codeApeInput = document.getElementById('codeApe');
+      const tvaIntracomInput = document.getElementById('tvaIntracom');
+      const googleSheetsEndpoint = 'https://script.google.com/macros/s/AKfycbz1iG-GfdgKl5tzzo1BNATWxDsWOjvSQKZ7z8GumKjVhO3Ui-jsKPxakeAkXF7fQ9l88A/exec';
+
+      function setHidden(element, hidden) {
+        if (element) {
+          element.classList.toggle('hidden', hidden);
+        }
+      }
+
+      function updateConditionalFields() {
+        const selectedTypologie = typologieSelect.value;
+        const selectedRole = vousEtesSelect.value;
+        const isClient = selectedRole === 'Client';
+        const isCompanyOrPublicEntity = selectedTypologie === 'Entreprise' || selectedTypologie === 'Entité publique';
+
+        [fieldEntitePublique, fieldEntreprise, fieldStatutEntreprise, fieldInfosEntreprise, fieldAdresseFacturation, fieldTvaClient, fieldAutreStatut].forEach((field) => setHidden(field, true));
+
+        if (selectedTypologie === 'Entité publique') {
+          setHidden(fieldEntitePublique, false);
+        } else if (selectedTypologie === 'Entreprise') {
+          setHidden(fieldEntreprise, false);
+        }
+
+        if (isCompanyOrPublicEntity) {
+          setHidden(fieldInfosEntreprise, false);
+          setHidden(fieldAdresseFacturation, false);
+
+          if (isClient && selectedTypologie === 'Entreprise') {
+            setHidden(fieldStatutEntreprise, false);
+          }
+
+          if ((selectedRole === 'Client' || selectedRole === 'Fournisseur') && (selectedTypologie === 'Entreprise' || selectedTypologie === 'Entité publique')) {
+            setHidden(fieldTvaClient, false);
+          }
+        }
+
+        if (statutEntrepriseSelect && statutEntrepriseSelect.value === 'Autre') {
+          setHidden(fieldAutreStatut, false);
+        }
+      }
+
+      if (vousEtesSelect) {
+        vousEtesSelect.addEventListener('change', updateConditionalFields);
+      }
+      if (typologieSelect) {
+        typologieSelect.addEventListener('change', updateConditionalFields);
+      }
+      if (statutEntrepriseSelect) {
+        statutEntrepriseSelect.addEventListener('change', updateConditionalFields);
+      }
+      if (sirenInput) {
+        sirenInput.addEventListener('input', function (event) {
+          event.target.value = event.target.value.replace(/\D/g, '');
+        });
+      }
+      if (siretInput) {
+        siretInput.addEventListener('input', function (event) {
+          event.target.value = event.target.value.replace(/\D/g, '');
+        });
+      }
+      if (codeApeInput) {
+        codeApeInput.addEventListener('input', function (event) {
+          event.target.value = event.target.value.replace(/[^0-9A-Z]/g, '').toUpperCase();
+        });
+      }
+      if (tvaIntracomInput) {
+        tvaIntracomInput.addEventListener('input', function (event) {
+          event.target.value = event.target.value.replace(/[^0-9A-Z]/g, '').toUpperCase();
+        });
+      }
+
+      form.addEventListener('reset', function () {
+        setTimeout(updateConditionalFields, 0);
+      });
+
+      form.addEventListener('submit', function (event) {
+        // Ajouter la date avant soumission
+        const dateField = form.querySelector('input[name="date"]');
+        if (dateField) {
+          dateField.value = new Date().toLocaleString('fr-FR');
+        }
+        
+        // Afficher message
+        statusMessage.textContent = 'Merci, vos données sont en cours d\'envoi...';
+        statusMessage.classList.add('show');
+
+
+        // Formspree gère la soumission - laisser le navigateur soumettre le formulaire
+      });
+
+      window.addEventListener('load', function () {
+        updateConditionalFields();
+      });
+    </script>
+  </body>
+</html>
